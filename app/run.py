@@ -7,7 +7,7 @@ from nltk.tokenize import word_tokenize
 
 from flask import Flask
 from flask import render_template, request, jsonify
-from plotly.graph_objs import Bar
+from plotly.graph_objs import Bar, Pie, Scatter
 from sklearn.externals import joblib
 from sqlalchemy import create_engine
 
@@ -47,16 +47,26 @@ def index():
     cat_names = [col for col in df_cat.columns if col != 'id']
     df_cat = pd.melt(df_cat, id_vars=['id'], value_vars=cat_names)
     category_totals = df_cat.groupby('variable')['value'].sum()
-    x_vals = category_totals.index.tolist()
-    y_vals = category_totals.values.tolist()
+    category_totals.sort_values(ascending=True, inplace=True)
+    #x_vals = category_totals.index.tolist()
+    #y_vals = category_totals.values.tolist()
+    x_vals = category_totals.values.tolist()
+    y_vals = category_totals.index.tolist()
+    
+    # extract data for 
+    df_message_cats = df_cat.groupby('id').sum()
+    df_message_cats['count'] = 1
+    df_message_cats = df_message_cats.groupby('value').sum()
+    x_counts = df_message_cats.index.tolist()
+    y_counts = df_message_cats['count'].values
     
     # create visuals
     graphs = [
         {
             'data': [
-                Bar(
-                    x=genre_names,
-                    y=genre_counts
+                Pie(
+                    labels = genre_names,
+                    values = genre_counts
                 )
             ],
 
@@ -74,17 +84,44 @@ def index():
             'data': [
                 Bar(
                     x=x_vals,
-                    y=y_vals
+                    y=y_vals,
+                    orientation='h',
+                    text=y_vals,
+                    textposition='auto'
                 )
             ],
 
             'layout': {
                 'title': 'Distribution of Message Categories',
                 'yaxis': {
+#                    'ticks': "",
+                    'showticklabels': False
+                },
+                'xaxis': {
+                    'title': "Messages"
+                },
+                'autosize': False,
+                'width': 500,
+                'height': 1000,
+                'showlegend': False
+            }
+        },
+        {
+            'data': [
+                Scatter(
+                    x = x_counts,
+                    y = y_counts,
+                    mode = 'lines+markers'
+                )
+            ],
+
+            'layout': {
+                'title': 'Distribution of Category Counts for Messages',
+                'yaxis': {
                     'title': "Messages"
                 },
                 'xaxis': {
-                    'title': "Category"
+                    'title': "Number of Categories"
                 }
             }
         }
