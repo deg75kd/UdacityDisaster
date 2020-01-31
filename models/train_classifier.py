@@ -63,7 +63,7 @@ def evaluate_model(model, X_test, Y_test, category_names):
     Y_pred = model.predict(X_test)
 
     # calculate f1 weighted average for every column
-    f1_list = []
+    #f1_list = []
     for i, column in enumerate(category_names):
         test_array = np.asarray(Y_test[column])
         pred_array = np.asarray(Y_pred[:,i])

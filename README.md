@@ -28,39 +28,20 @@ The goal of this project is to classify Tweets sent during a disaster to determi
 
 ## Prerequisites
 
-apache-airflow==1.10.2
-beautifulsoup4==4.6.0
-bokeh==0.12.13
-cloudpickle==0.2.2
-conda==4.6.9
-dask==0.16.1
-dill==0.2.7.1
-Flask==0.12.4
-gunicorn==19.9.0
-itsdangerous==0.24
-Jinja2==2.10
-joblib==0.11
-json-merge-patch==0.2
-jsondiff==1.1.1
-jsonpickle==1.1
-jsonschema==2.6.0
-Markdown==2.6.9
-MarkupSafe==1.0
-matplotlib==2.1.0
-nltk==3.2.5
-numpy==1.12.1
-pandas==0.23.3
-pickleshare==0.7.4
-plotly==2.0.15
-python3-openid==3.1.0
-requests==2.21.0
-responses==0.10.6
-scikit-learn==0.19.1
-SQLAlchemy==1.2.18
-
-```
-Give examples
-```
+Flask 0.12.4
+gunicorn 19.9.0
+itsdangerous 0.24
+Jinja2 2.10
+json
+nltk 3.2.5
+numpy 1.12.1
+pandas 0.23.3
+pickle 0.7.4
+plotly 2.0.15
+python 3.6
+scikit-learn 0.19.1
+SQLAlchemy 1.2.18
+SQLite3
 
 ## Running the Code
 
@@ -81,7 +62,9 @@ python run.py
 
 ## Results
 
+Over half of the messages are catgorized as "related", while just shy of half fall into the genre of news.  With the categories, each message can be classified into multiple categories.  If we then look at the number of categories each message falls into, there is an almost logarithmic decline.  Most messages don't fit into any category, and very few fit into more than ten.  There is a massive drop-off at two categories.  Based on the rest of the graph, this might deserve more investigation.
 
+As for the classification model, testing reveals the average f1-score of most categories to be at 0.9 or higher.
 
 ## Built With
 
