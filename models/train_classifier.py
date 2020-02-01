@@ -19,9 +19,18 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.multioutput import MultiOutputClassifier
 
-#def load_data(full_db_path):
-    #engine = create_engine(full_db_path)
 def load_data(database_filepath):
+    """Load SQLite database for use in a machine learning model.
+    
+    Args:
+        database_filepath: Location of the SQLite database to load
+    
+    Returns:
+        Features to be used in the ML model
+        Categories the ML model will try to predict
+        Names of the categories for Y
+    """
+
     engine = create_engine('sqlite:///{}'.format(database_filepath))
     df = pd.read_sql("select * from messages", engine)
 
@@ -33,6 +42,15 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    """Tokenizes a text into words.
+
+    Args:
+        text: The text field to be tokenized
+
+    Returns:
+        A list of lemmatized words in lowercase
+    """
+
     url_regex = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
     detected_urls = re.findall(url_regex, text)
     for url in detected_urls:
@@ -50,6 +68,12 @@ def tokenize(text):
 
 
 def build_model():
+    """Creates the machine learning model.
+    
+    Returns:
+        Machine learning model
+    """
+
     pipeline = Pipeline([
         ('vect', CountVectorizer()),
         ('tfidf', TfidfTransformer()),
@@ -60,37 +84,49 @@ def build_model():
 
 
 def evaluate_model(model, X_test, Y_test, category_names):
+    """Evaluates the machine learning model.
+    
+    Args:
+        model: Machine learning model to evaluate
+        X_test: Features set for testing
+        Y_test: Categories set for testing
+        category_names: Category names
+    """
+
     Y_pred = model.predict(X_test)
 
-    # calculate f1 weighted average for every column
-    #f1_list = []
     for i, column in enumerate(category_names):
         test_array = np.asarray(Y_test[column])
         pred_array = np.asarray(Y_pred[:,i])
-        #report = classification_report(test_array, pred_array, output_dict=True)
         report = classification_report(test_array, pred_array)
-        #f1_list.append(report['weighted avg']['f1-score'])
         print('{}:\n{}'.format(column, report))
 
-    #total_avg = sum(f1_list) / len(f1_list)
-    #print('Average of weighted f1-score for all columns:\n{}'.format(total_avg))
     return None
 
 
 def save_model(model, model_filepath):
-    
+    """Saves the machine learning model as a pickle file.
+
+    Args:
+        model: Machine learning model
+        model_filepath: File to save to
+    """
     pickle_file = open(model_filepath, 'wb')
     pickle.dump(model, pickle_file)
     return None
 
 
 def main():
+    """Creates a machine learning model.
+    
+    Args (command-line):
+        database_filepath: SQLite database containing training data
+        model_filepath: File to save model to
+    """
+
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
-        # full_db_path = 'sqlite:////' + database_filepath
 
-        # print('Loading data...\n    DATABASE: {}'.format(full_db_path))
-        # X, Y, category_names = load_data(full_db_path)
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
         X, Y, category_names = load_data(database_filepath)
 

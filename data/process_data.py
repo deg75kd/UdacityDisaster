@@ -5,6 +5,16 @@ import sqlite3
 from sqlalchemy import create_engine
 
 def load_data(messages_filepath, categories_filepath):
+    """Loads CSV files into a merged dataframe.
+    
+    Args:
+        messages_filepath: CSV file of messages
+        categories_filepath: CSV file of categories
+    
+    Returns:
+        Merged dataframe
+    """
+
     # load csv files
     messages = pd.read_csv(messages_filepath)
     categories = pd.read_csv(categories_filepath)
@@ -14,6 +24,15 @@ def load_data(messages_filepath, categories_filepath):
     return df_merge
 
 def clean_data(df):
+    """Separates categories in dataframe into different columns.
+    
+    Args:
+        df: Dataframe with a single 'categories' column
+    
+    Returns:
+        Dataframe that is ready for analysis and modeling
+    """
+
     # split categories into separate columns
     df_cat = df['categories'].str.split(';', expand=True)
     row = df_cat.head(1)
@@ -31,11 +50,26 @@ def clean_data(df):
     return df
 
 def save_data(df, database_filename):
+    """Saves dataframe to a SQLite database.
+    
+    Args:
+        df: Dataframe to be saved
+        database_filename: Name for SQLite database file
+    """
+
     engine = create_engine('sqlite:///{}'.format(database_filename))
-    df.to_sql('messages', engine, index=False)
+    df.to_sql('messages', engine, if_exists='replace', index=False)
     return None
 
 def main():
+    """Performs ETL from CSV files to a SQLite database.
+    
+    Args (command-line):
+        messages_filepath: CSV file of messages
+        categories_filepath: CSV file of categories
+        database_filepath: SQLite database file to save to
+    """
+
     if len(sys.argv) == 4:
 
         messages_filepath, categories_filepath, database_filepath = sys.argv[1:]

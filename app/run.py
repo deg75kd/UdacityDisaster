@@ -15,6 +15,15 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    """Tokenizes a text into words.
+
+    Args:
+        text: Text field to be tokenized
+
+    Returns:
+        List of the text's words in lowercase
+    """
+
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -32,11 +41,15 @@ df = pd.read_sql_table('messages', engine)
 # load model
 model = joblib.load("../models/classifier.pkl")
 
-
 # index webpage displays cool visuals and receives user input text for model
 @app.route('/')
 @app.route('/index')
 def index():
+    """Analyzes data and creates graphs
+    
+    Returns:
+        Flask object for rendering graphs on webpage
+    """
     
     # extract data for genre bar chart
     genre_counts = df.groupby('genre').count()['message']
@@ -48,12 +61,10 @@ def index():
     df_cat = pd.melt(df_cat, id_vars=['id'], value_vars=cat_names)
     category_totals = df_cat.groupby('variable')['value'].sum()
     category_totals.sort_values(ascending=True, inplace=True)
-    #x_vals = category_totals.index.tolist()
-    #y_vals = category_totals.values.tolist()
     x_vals = category_totals.values.tolist()
     y_vals = category_totals.index.tolist()
     
-    # extract data for 
+    # extract data for graph of number of categories by messages
     df_message_cats = df_cat.groupby('id').sum()
     df_message_cats['count'] = 1
     df_message_cats = df_message_cats.groupby('value').sum()
@@ -138,6 +149,12 @@ def index():
 # web page that handles user query and displays model results
 @app.route('/go')
 def go():
+    """Processes search item from user
+
+    Returns:
+        Flask object for rendering results
+    """
+
     # save user input in query
     query = request.args.get('query', '') 
 
@@ -154,6 +171,7 @@ def go():
 
 
 def main():
+    """Runs web application"""
     app.run(host='0.0.0.0', port=3001, debug=True)
 
 
