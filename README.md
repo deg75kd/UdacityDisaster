@@ -29,18 +29,31 @@ The goal of this project is to classify Tweets sent during a disaster to determi
 ## Prerequisites
 
 Flask 0.12.4
+
 gunicorn 19.9.0
+
 itsdangerous 0.24
+
 Jinja2 2.10
+
 json
+
 nltk 3.2.5
+
 numpy 1.12.1
+
 pandas 0.23.3
+
 pickle 0.7.4
+
 plotly 2.0.15
+
 python 3.6
+
 scikit-learn 0.19.1
+
 SQLAlchemy 1.2.18
+
 SQLite3
 
 ## Running the Code
