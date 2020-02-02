@@ -41,7 +41,7 @@ plotly 2.0.15\
 python 3.6\
 scikit-learn 0.19.1\
 SQLAlchemy 1.2.18\
-SQLite3\
+SQLite3
 
 ## Running the Code
 
